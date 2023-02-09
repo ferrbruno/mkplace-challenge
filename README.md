@@ -65,6 +65,19 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Migrations
+
+After changing a schema, create migrations using [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate).
+
+```bash
+npx prisma migrate dev --name [migration name]
+```
+
+### Using docker compose
+```bash
+docker compose exec api npx prisma migrate dev --name [migration name]
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
