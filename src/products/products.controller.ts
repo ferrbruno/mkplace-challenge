@@ -52,27 +52,27 @@ export class ProductsController {
 
   @Post('/search')
   find(@Body() { brand, name, price_range, seller }: SearchProductDto) {
-    const searhFilter: Prisma.Enumerable<Prisma.ProductWhereInput> = [];
+    const searchFilter: Prisma.Enumerable<Prisma.ProductWhereInput> = [];
 
     if (brand) {
-      searhFilter.push({ brand: { name: { contains: brand } } });
+      searchFilter.push({ brand: { name: { contains: brand } } });
     }
 
     if (seller) {
-      searhFilter.push({ seller: { name: { contains: seller } } });
+      searchFilter.push({ seller: { name: { contains: seller } } });
     }
 
     if (name) {
-      searhFilter.push({ name: { contains: name } });
+      searchFilter.push({ name: { contains: name } });
     }
 
     if (price_range) {
-      searhFilter.push({ price_range });
+      searchFilter.push({ price_range });
     }
 
     return this.productsService.find({
       where: {
-        OR: searhFilter,
+        OR: searchFilter,
       },
       include: {
         brand: true,
