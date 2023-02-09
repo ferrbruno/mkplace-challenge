@@ -6,6 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
@@ -78,8 +82,14 @@ export class ProductsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.productsService.findById(id);
+  async findOne(@Param('id') id: number) {
+    const product = await this.productsService.findById(id);
+
+    if (!product) {
+      throw new NotFoundException();
+    }
+
+    return product;
   }
 
   @Patch(':id')
@@ -123,7 +133,18 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.productsService.remove(id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: number) {
+    try {
+      await this.productsService.remove(id);
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2025') {
+          throw new NotFoundException(err.meta?.cause);
+        }
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 }
