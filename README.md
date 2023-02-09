@@ -34,6 +34,14 @@ $ npm install
 
 ## Running the app
 
+### [Docker Compose](https://docs.docker.com/compose/) (Recommended)
+
+```bash
+docker compose up -d
+```
+
+### NPM
+
 ```bash
 # development
 $ npm run start
@@ -44,6 +52,10 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## Documentation (Swagger)
+
+When the app is running, you can access the API docs in the [/docs](http://localhost:3000/docs) route.
 
 ## Test
 
@@ -56,6 +68,20 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+```
+
+## Migrations
+
+After changing a schema, create migrations using [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate).
+
+```bash
+npx prisma migrate dev --name [migration name]
+```
+
+### Using docker compose
+
+```bash
+docker compose exec api npx prisma migrate dev --name [migration name]
 ```
 
 ## Support
