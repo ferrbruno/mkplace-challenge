@@ -34,6 +34,13 @@ $ npm install
 
 ## Running the app
 
+### [Docker Compose](https://docs.docker.com/compose/) (Recommended)
+
+```bash
+docker compose up -d
+```
+
+### NPM
 ```bash
 # development
 $ npm run start
