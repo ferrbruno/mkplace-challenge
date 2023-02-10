@@ -9,7 +9,7 @@ export class CreateProductDto {
 
   @ApiProperty()
   @IsNumber()
-  price_range: number;
+  priceRange: number;
 
   @ApiPropertyOptional()
   @IsString()
