@@ -25,6 +25,16 @@ export class PrismaExceptionFilter extends BaseExceptionFilter {
         });
         break;
 
+      case 'P2003':
+        status = HttpStatus.BAD_REQUEST;
+
+        response.status(status).json({
+          statusCode: status,
+          message: 'Foreign key constraint failed',
+          field: exception.meta.field_name,
+        });
+        break;
+
       case 'P2025':
         status = HttpStatus.NOT_FOUND;
 

@@ -24,7 +24,18 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Products API developed for the [MKPLACE Challenge](https://github.com/mkplace/mk-challenge).
+
+## Content
+
+- [Installation](#installation)
+- [Running the app](#running-the-app)
+  - [Docker Compose (Recommended)](#docker-compose-recommended)
+  - [npm](#npm)
+- [Documentation (Swagger)](#documentation-swagger)
+- [Test](#test)
+- [Migrations](#migrations)
+  - [Using Docker Compose](#using-docker-compose)
 
 ## Installation
 
@@ -36,11 +47,13 @@ $ npm install
 
 ### [Docker Compose](https://docs.docker.com/compose/) (Recommended)
 
+WARNING: You should run the app [migrations](#migrations) after creating the containers for the first time.
+
 ```bash
 docker compose up -d
 ```
 
-### NPM
+### npm
 
 ```bash
 # development
@@ -72,16 +85,22 @@ $ npm run test:cov
 
 ## Migrations
 
+Apply migrations on a development environment using [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate).
+
+```bash
+npm run migrate:dev
+```
+
 After changing a schema, create migrations using [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate).
 
 ```bash
-npx prisma migrate dev --name [migration name]
+npm run migrate:dev --name [migration name]
 ```
 
 ### Using docker compose
 
 ```bash
-docker compose exec api npx prisma migrate dev --name [migration name]
+docker compose exec api npm run migrate:dev [options]
 ```
 
 ## Support
