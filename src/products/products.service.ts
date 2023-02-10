@@ -19,7 +19,13 @@ export class ProductsService {
   }
 
   async findById(id: number) {
-    return this.prisma.product.findUnique({ where: { id } });
+    return this.prisma.product.findUnique({
+      where: { id },
+      include: {
+        brand: true,
+        seller: true,
+      },
+    });
   }
 
   async update(id: number, data: Prisma.ProductUpdateInput) {
