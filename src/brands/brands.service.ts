@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from '../services/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class BrandsService {
@@ -22,30 +22,10 @@ export class BrandsService {
   }
 
   async update(id: number, data: Prisma.BrandUpdateInput) {
-    try {
-      return await this.prisma.brand.update({ where: { id }, data });
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2025') {
-          throw new NotFoundException('Brand not found.');
-        }
-      }
-
-      throw err;
-    }
+    return this.prisma.brand.update({ where: { id }, data });
   }
 
   async remove(id: number) {
-    try {
-      return await this.prisma.brand.delete({ where: { id } });
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2025') {
-          throw new NotFoundException('Brand not found.');
-        }
-      }
-
-      throw err;
-    }
+    return this.prisma.brand.delete({ where: { id } });
   }
 }

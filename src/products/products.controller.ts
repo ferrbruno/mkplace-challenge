@@ -9,14 +9,19 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  InternalServerErrorException,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
 
 const controllerName = 'products';
 
@@ -26,6 +31,10 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @ApiCreatedResponse({
+    description: 'The product was successfully created.',
+    type: Product,
+  })
   create(@Body() { brand, name, priceRange, seller }: CreateProductDto) {
     return this.productsService.create({
       name,
@@ -46,12 +55,18 @@ export class ProductsController {
   }
 
   @Get()
+  @ApiOkResponse({
+    type: [Product],
+  })
   findAll() {
     return this.productsService.findAll();
   }
 
   @Post('/search')
   @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: [Product],
+  })
   find(@Body() { brand, name, priceRange, seller }: SearchProductDto) {
     const searchFilter: Prisma.Enumerable<Prisma.ProductWhereInput> = [];
 
@@ -83,6 +98,9 @@ export class ProductsController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    type: Product,
+  })
   async findOne(@Param('id') id: number) {
     const product = await this.productsService.findById(id);
 
@@ -94,6 +112,9 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @ApiOkResponse({
+    type: Product,
+  })
   update(
     @Param('id') id: number,
     @Body() { brand, description, name, priceRange, seller }: UpdateProductDto,
@@ -135,17 +156,10 @@ export class ProductsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'The product was successfully deleted.',
+  })
   async remove(@Param('id') id: number) {
-    try {
-      await this.productsService.remove(id);
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2025') {
-          throw new NotFoundException(err.meta?.cause);
-        }
-      }
-
-      throw new InternalServerErrorException();
-    }
+    await this.productsService.remove(id);
   }
 }
