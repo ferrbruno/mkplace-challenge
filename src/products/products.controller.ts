@@ -9,6 +9,8 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
+  Inject,
+  CACHE_MANAGER,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -17,6 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
+import { Cache } from 'cache-manager';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
@@ -28,7 +31,10 @@ const controllerName = 'products';
 @ApiTags(controllerName)
 @Controller(controllerName)
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+  ) {}
 
   @Post()
   @ApiCreatedResponse({
@@ -67,7 +73,7 @@ export class ProductsController {
   @ApiOkResponse({
     type: [Product],
   })
-  find(@Body() { brand, name, priceRange, seller }: SearchProductDto) {
+  async find(@Body() { brand, name, priceRange, seller }: SearchProductDto) {
     const searchFilter: Prisma.Enumerable<Prisma.ProductWhereInput> = [];
 
     if (brand) {
@@ -86,7 +92,15 @@ export class ProductsController {
       searchFilter.push({ priceRange });
     }
 
-    return this.productsService.find({
+    const cacheKey = `product_search_${JSON.stringify(searchFilter)}`;
+
+    const cached = await this.cache.get<Product[]>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
+    const products = await this.productsService.find({
       where: {
         OR: searchFilter,
       },
@@ -95,6 +109,10 @@ export class ProductsController {
         seller: true,
       },
     });
+
+    await this.cache.set(cacheKey, products);
+
+    return products;
   }
 
   @Get(':id')

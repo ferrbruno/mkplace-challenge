@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ProductsController } from '../products.controller';
@@ -8,6 +9,7 @@ describe('ProductsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [CacheModule.register()],
       controllers: [ProductsController],
       providers: [ProductsService, PrismaService],
     }).compile();
