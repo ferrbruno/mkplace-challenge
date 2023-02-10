@@ -17,7 +17,7 @@ model Product {
   seller      Seller   @relation(fields: [sellerId], references: [id])
   brandId     Int
   sellerId    Int
-  price_range Decimal  @db.Money
+  priceRange  Decimal  @db.Money
   description String?  @db.VarChar(255)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
