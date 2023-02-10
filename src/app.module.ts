@@ -16,9 +16,9 @@ import { SellersModule } from './sellers/sellers.module';
       isGlobal: true,
     }),
     CacheModule.registerAsync<RedisOptions>({
+      isGlobal: true,
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        isGlobal: true,
         store: redisStore,
         host: config.getOrThrow('REDIS_HOST'),
       }),
