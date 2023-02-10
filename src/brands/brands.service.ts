@@ -1,26 +1,51 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBrandDto } from './dto/create-brand.dto';
-import { UpdateBrandDto } from './dto/update-brand.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../services/prisma.service';
 
 @Injectable()
 export class BrandsService {
-  create(createBrandDto: CreateBrandDto) {
-    return 'This action adds a new brand';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(data: Prisma.BrandCreateInput) {
+    return this.prisma.brand.create({ data });
   }
 
-  findAll() {
-    return `This action returns all brands`;
+  async findAll() {
+    return this.prisma.brand.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} brand`;
+  async findOne(id: number) {
+    return this.prisma.brand.findUnique({
+      where: { id },
+      include: { products: true },
+    });
   }
 
-  update(id: number, updateBrandDto: UpdateBrandDto) {
-    return `This action updates a #${id} brand`;
+  async update(id: number, data: Prisma.BrandUpdateInput) {
+    try {
+      return await this.prisma.brand.update({ where: { id }, data });
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2025') {
+          throw new NotFoundException('Brand not found.');
+        }
+      }
+
+      throw err;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} brand`;
+  async remove(id: number) {
+    try {
+      return await this.prisma.brand.delete({ where: { id } });
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2025') {
+          throw new NotFoundException('Brand not found.');
+        }
+      }
+
+      throw err;
+    }
   }
 }

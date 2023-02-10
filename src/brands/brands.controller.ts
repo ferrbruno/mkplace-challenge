@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -33,8 +34,8 @@ export class BrandsController {
     description: 'The brand was successfully created.',
     type: Brand,
   })
-  create(@Body() createBrandDto: CreateBrandDto) {
-    return this.brandsService.create(createBrandDto);
+  create(@Body() { name }: CreateBrandDto) {
+    return this.brandsService.create({ name });
   }
 
   @Get()
@@ -52,8 +53,14 @@ export class BrandsController {
   @ApiNotFoundResponse({
     description: 'Brand not found',
   })
-  findOne(@Param('id') id: string) {
-    return this.brandsService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const brand = await this.brandsService.findOne(id);
+
+    if (!brand) {
+      throw new NotFoundException('Brand not found.');
+    }
+
+    return brand;
   }
 
   @Patch(':id')
@@ -63,8 +70,8 @@ export class BrandsController {
   @ApiNotFoundResponse({
     description: 'Brand not found',
   })
-  update(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
-    return this.brandsService.update(+id, updateBrandDto);
+  update(@Param('id') id: number, @Body() { name }: UpdateBrandDto) {
+    return this.brandsService.update(id, { name });
   }
 
   @Delete(':id')
@@ -75,7 +82,7 @@ export class BrandsController {
   @ApiNotFoundResponse({
     description: 'Brand not found',
   })
-  remove(@Param('id') id: string) {
-    return this.brandsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.brandsService.remove(id);
   }
 }
