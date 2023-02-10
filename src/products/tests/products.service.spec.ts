@@ -25,7 +25,7 @@ describe('ProductsService', () => {
     const data: CreateProductDto = {
       brand: 'test brand',
       name: 'test product',
-      price_range: 500,
+      priceRange: 500,
       seller: 'test seller',
     };
 
@@ -55,7 +55,7 @@ describe('ProductsService', () => {
     const mockResponse = {
       brand: 'test brand',
       name: 'test product',
-      price_range: 500,
+      priceRange: 500,
       seller: 'test seller',
     };
 
@@ -71,7 +71,7 @@ describe('ProductsService', () => {
     const data: UpdateProductDto = {
       brand: 'test brand',
       name: 'test product',
-      price_range: 500,
+      priceRange: 500,
       seller: 'test seller',
     };
 

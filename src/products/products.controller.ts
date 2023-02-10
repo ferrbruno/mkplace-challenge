@@ -26,10 +26,10 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() { brand, name, price_range, seller }: CreateProductDto) {
+  create(@Body() { brand, name, priceRange, seller }: CreateProductDto) {
     return this.productsService.create({
       name,
-      price_range,
+      priceRange,
       brand: {
         connectOrCreate: {
           where: { name: brand },
@@ -51,7 +51,8 @@ export class ProductsController {
   }
 
   @Post('/search')
-  find(@Body() { brand, name, price_range, seller }: SearchProductDto) {
+  @HttpCode(HttpStatus.OK)
+  find(@Body() { brand, name, priceRange, seller }: SearchProductDto) {
     const searchFilter: Prisma.Enumerable<Prisma.ProductWhereInput> = [];
 
     if (brand) {
@@ -66,8 +67,8 @@ export class ProductsController {
       searchFilter.push({ name: { contains: name } });
     }
 
-    if (price_range) {
-      searchFilter.push({ price_range });
+    if (priceRange) {
+      searchFilter.push({ priceRange });
     }
 
     return this.productsService.find({
@@ -95,7 +96,7 @@ export class ProductsController {
   @Patch(':id')
   update(
     @Param('id') id: number,
-    @Body() { brand, description, name, price_range, seller }: UpdateProductDto,
+    @Body() { brand, description, name, priceRange, seller }: UpdateProductDto,
   ) {
     const updateInput: Prisma.ProductUpdateInput = {};
 
@@ -125,8 +126,8 @@ export class ProductsController {
       updateInput.name = name;
     }
 
-    if (price_range) {
-      updateInput.price_range = price_range;
+    if (priceRange) {
+      updateInput.priceRange = priceRange;
     }
 
     return this.productsService.update(id, updateInput);
